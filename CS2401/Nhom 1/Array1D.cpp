@@ -24,11 +24,6 @@ void outputArr(const int a[], const int n) {
 	cout << endl;
 }
 
-//Kiem tra so duong
-bool isDuong(int n) {
-	return n >= 0;
-}
-
 //Kiem tra so am
 bool isAm(int n) {
 	return n < 0;
