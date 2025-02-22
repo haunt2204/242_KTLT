@@ -54,12 +54,15 @@ bool isDuong(int n) {
 
 //Kiem tra so nguyen to
 bool isNguyenTo(int n) {
-	if (n < 2) return false;
-	else if (n > 2) {
+	if (n < 2)
+		return false;
+
+	if (n > 2) {
 		for (int i = 2; i <= sqrt(n); i++)
-			if (n % i == 0) 
+			if (n % i == 0)
 				return false;
 	}
+
 	return true;
 }
 
