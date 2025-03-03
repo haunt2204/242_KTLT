@@ -36,6 +36,7 @@ void outputArr(const int *a, const int n) {
 //Tim kiem 1 phan tu tren mang 
 int* find(const int *a, const int n, const int key) {
 	int *res = NULL;
+
 	//Sinh vien cai dat
 
 	return res;
