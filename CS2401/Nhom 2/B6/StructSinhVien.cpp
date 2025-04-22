@@ -6,8 +6,8 @@ using namespace std;
 
 #define SOMH 3
 
-string loai[] = { "Duoi TB", "TB", "Kha", "Gioi" };
-enum loai { DUOI_TB, TB, KHA, GIOI };
+string xepLoai[] = { "Duoi TB", "TB", "Kha", "Gioi" };
+enum Loai {DUOI_TB, TB, KHA, GIOI};
 
 struct SinhVien
 {
@@ -32,24 +32,25 @@ void init(DSSV& l) {
 double tinhDiemTB(SinhVien sv) {
 	double sum = 0;
 	for (int i = 0; i < SOMH; i++) {
-		sum+=sv.diem[i];
+		sum += sv.diem[i];
 	}
 	return sum / SOMH;
 }
 
-int xepLoai(SinhVien sv) {
+int xepLoaiSv(SinhVien sv) {
 	double dtb = tinhDiemTB(sv);
-	if (dtb >= 8.0)
-		return GIOI;//GIOI
+
+	if (dtb >= 8)
+		return GIOI; 
 	if (dtb >= 6.5)
-		return KHA;//KHA
-	if (dtb >= 5.0)
-		return TB;//TB
-	return DUOI_TB;//DUOI_TB
+		return KHA; 
+	if (dtb >= 5)
+		return TB; 
+	return DUOI_TB;
 }
 
 bool isHocBong(SinhVien sv) {
-	return tinhDiemTB(sv)>=8;
+	return tinhDiemTB(sv) >= 8;
 }
 
 void nhap1Sv(SinhVien& sv) {
@@ -60,12 +61,11 @@ void nhap1Sv(SinhVien& sv) {
 	cout << "Nhap ho ten: ";
 	getline(cin, sv.hoTen);
 
-	cout << "Nhap ngay sinh (cu phap: dd/mm/yyyy): ";
-	cin >> sv.ngaySinh;
-	cin.ignore();
-
 	cout << "Nhap que quan: ";
 	cin.getline(sv.queQuan, 50);
+
+	cout << "Nhap ngay sinh (cu phap: dd/mm/yyyy): ";
+	cin >> sv.ngaySinh;
 
 	cout << "Nhap diem 3 mon hoc: ";
 	for (int i = 0; i < SOMH; i++) {
@@ -73,7 +73,7 @@ void nhap1Sv(SinhVien& sv) {
 	}
 }
 
-void xuat1Sv(SinhVien& sv) {
+void xuat1Sv(SinhVien sv) {
 	cout << "=======================================\n";
 	cout << "ID: " << sv.mssv << endl;
 	cout << "Ho ten: " << sv.hoTen << endl;
@@ -84,15 +84,16 @@ void xuat1Sv(SinhVien& sv) {
 		cout << sv.diem[i] << " ";
 	}
 	cout << "\nDiem TB tich luy: " << tinhDiemTB(sv) << endl;
-	cout << "Xep loai: " << loai[xepLoai(sv)] << endl;
+	cout << "Xep loai: " << xepLoai[xepLoaiSv(sv)] << endl;
 	cout << "=======================================\n";
 }
 
-void printList(DSSV l) {
+void xuatDsSv(DSSV l) {
 	if (l.ds == NULL) {
 		cout << "Danh sach rong!\n";
 		return;
 	}
+
 	for (int i = 0; i < l.soLuong; i++) {
 		xuat1Sv(l.ds[i]);
 	}
@@ -121,12 +122,12 @@ void pushBackArr(SinhVien*& a, int& n, SinhVien newElm) {
 
 void readData(DSSV& l) {
 	//Tao doi tuong nhap/xuat
-	//Chi dinh duong dan (tuong doi): them tap tin vao --> working directory
+	//Chi dinh duong dan (tuong doi): chep tap tin --> working directory
 	//Kiem tra trang thai (is_open())
-	//Doc hoac xuat (eof())
+	//Doc hoac ghi du lieu (eof())
 	//Dong tap tin lai (close())
+
 	ifstream inFile;
-	
 	inFile.open("SinhVien.txt");
 	
 	if (inFile.is_open()) {
@@ -165,18 +166,16 @@ int cmpWithAddAsc(SinhVien sv1, SinhVien sv2) {
 //Sap xep theo diem trung binh
 int cmpWithAvrAsc(SinhVien sv1, SinhVien sv2) {
 	double d1 = tinhDiemTB(sv1);//5.5
-	double d2 = tinhDiemTB(sv2);//5.333
-	//Xu ly tiep
+	double d2 = tinhDiemTB(sv2);//5.3
+
 	return d1 > d2 ? 1 : (d1 < d2 ? -1 : 0);
 }
 
-void sortList(DSSV& l, int func(SinhVien, SinhVien)) {
-	if (l.ds!=NULL) {
-		for (int i = 0; i < l.soLuong - 1; i++) {
-			for (int j = i + 1; j < l.soLuong; j++) {
-				if (func(l.ds[j], l.ds[i])<0) {
-					swap(l.ds[i], l.ds[j]);
-				}
+void sort(DSSV l, int func(SinhVien, SinhVien)) {
+	for (int i = 0; i < l.soLuong - 1; i++) {
+		for (int j = i + 1; j < l.soLuong; j++) {
+			if (func(l.ds[j], l.ds[i])<0) {
+				swap(l.ds[i], l.ds[j]);
 			}
 		}
 	}
@@ -185,6 +184,7 @@ void sortList(DSSV& l, int func(SinhVien, SinhVien)) {
 void xuatHocBong(DSSV l) {
 	ofstream outFile("data_sv_hb.txt");
 	if (outFile.is_open()) {
+
 		for (int i = 0; i < l.soLuong; i++) {
 			if (isHocBong(l.ds[i])) {
 				outFile << l.ds[i].mssv << '$'
@@ -197,6 +197,7 @@ void xuatHocBong(DSSV l) {
 				outFile << endl;
 			}
 		}
+		cout << "Da ghi thanh cong!\n";
 		outFile.close();
 	}
 }
@@ -215,21 +216,6 @@ SinhVien* timKiem(DSSV l, long long id) {
 }
 
 //Ham cung ten
-//Cach 1:
-//DSSV timKiem(DSSV l, string name) {
-//	DSSV res;
-//	init(res);
-//
-//	for (int i = 0; i < l.soLuong; i++) {
-//		if (l.ds[i].hoTen == name) {
-//			pushBackArr(res.ds, res.soLuong, l.ds[i]);
-//		}
-//	}
-//
-//	return res;
-//}
-
-//Cach 2:
 vector<SinhVien> timKiem(DSSV l, string name) {
 	vector<SinhVien> res;
 
@@ -247,19 +233,17 @@ int main() {
 	init(l1);
 
 	readData(l1);
-	//Xuat danh sach 
 
-	cout << "==============KQ SAP XEP============\n";
-	sortList(l1, cmpWithAvrAsc);
-	printList(l1);
-
+	cout << "============DS SAU SAP XEP==========\n";
+	sort(l1, cmpWithAvrAsc);
+	xuatDsSv(l1);
 	//xuatHocBong(l1);
 
-	cout << "==============KQ TIM KIEM============\n";
+	cout << "============KET QUA TIM KIEM==========\n";
 	vector<SinhVien> res = timKiem(l1, "Do Thao Duyen");
-	
+
 	if (res.size() > 0) {
-		//cout << res->hoTen;
+		/*cout << res->hoTen << endl;*/
 		/*xuat1Sv(*res);*/
 		for (int i = 0; i < res.size(); i++) {
 			xuat1Sv(res[i]);
@@ -268,6 +252,6 @@ int main() {
 	else
 		cout << "Khong tim thay!\n";
 
-	delete[]l1.ds;
+	delete[] l1.ds;
 	return 0;
 }
